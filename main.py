@@ -46,22 +46,29 @@ def t1start():
 
 def new_win():
     new = Toplevel(root)
+    new.geometry("250x260")
 
-    lbl_name = Label(new,text = "NAME : ")
-    lbl_name.grid(row = 0 , column = 0, pady = 20 )
+    lbl_Fname = Label(new,text = " FIRST NAME : ")
+    lbl_Fname.grid(row = 0 , column = 0, pady = 20 , padx =10 )
 
-    en_name  = Entry(new,state = DISABLED)
-    en_name.grid(row = 0 , column = 1)
+    en_Fname  = Entry(new)
+    en_Fname.grid(row = 0 , column = 1)
+
+    lbl_Lname = Label(new,text = " LAST NAME : ")
+    lbl_Lname.grid(row = 1 , column = 0, pady = 20 , padx =10 )
+
+    en_Lname  = Entry(new)
+    en_Lname.grid(row = 1 , column = 1)
 
     lbl_Room = Label(new, text = "Room Alotted : ")
-    lbl_Room.grid(row = 1 , column = 0)
+    lbl_Room.grid(row = 2 , column = 0, padx = 10)
 
     options = [
         "Casualty" ,
         "Day Room" , 
         "Consulting Room" , 
         "Emergency Room" , 
-        "High Dependency unit" , 
+        "High Dependency unit" ,
         "ICU",
         "Delivery Room",
         "Operation Theatre",
@@ -72,31 +79,31 @@ def new_win():
     variable.set(options[0])
 
     opt_box = OptionMenu(new,variable,*options)
-    opt_box.grid(row = 1 , column = 1 )
-    opt_box.configure(state = "disabled")
+    opt_box.grid(row = 2 , column = 1 )
 
     bed_no = Label(new, text = " Bed no. : ")
-    bed_no.grid(row = 2 , column = 0 , pady = 20)
+    bed_no.grid(row = 3 , column = 0 , pady = 20)
 
-    en_bed = Entry(new,state = DISABLED)
-    en_bed.grid(row = 2 , column = 1)
+    en_bed = Entry(new)
+    en_bed.grid(row = 3 , column = 1)
 
-    btn_submit = Button(new, text = "Submit" , command = submit)
-    btn_submit.grid(row = 3 , column = 0 , columnspan = 2 , pady = 10)
+    btn_submit = Button(new, text = "Submit" , command = lambda: submit(en_Fname , en_Lname , en_bed , variable) )
+    btn_submit.grid(row = 4 , column = 0 , columnspan = 2 , pady = 10)
 
-def add_entry():
-    en_name['state'] = NORMAL
-    en_bed['state'] = NORMAL
-    opt_box.configure(state = "normal")
+    return en_Fname , en_Lname , en_bed , variable
 
-def submit():
-    name = en_name.get()
+def submit(en_Fname , en_Lname , en_bed , variable):
+    Fname = en_Fname.get()
+    Lname = en_Lname.get()
     bed = en_bed.get()
     bed = int(bed)
     room = variable.get()
-    print(name,type(name))
+    print(Fname,type(Fname))
     print(bed,type(bed))
     print(room,type(room))
+
+    values  = [Fname , Lname , room,bed]
+    query1 = "NSERT INTO `hatim_data`.`hospital_pt` (`F_name`, `L_name`, `Room`, `Bed_no`) VALUES ({}, {}, {},{});".format(values)
 
 # Frames
 
