@@ -6,7 +6,20 @@ from time import sleep
 from threading import Thread
 from tkinter import messagebox
 
-root = Tk()
+root = Tk()  # menu
+menubar = Menu(root)
+root.config(menu=menubar)
+
+# submenu
+submenu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Commands", menu=submenu)
+submenu.add_command(label="open", command="")
+submenu.add_command(label="exit", command="")
+
+# submenu 2
+submenu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Help", menu=submenu)
+submenu.add_command(label="about us", command="")
 # root.get_themes()
 # root.set_theme("radiance")
 root.geometry("700x320")
@@ -107,22 +120,6 @@ def submit(
         new.destroy()
 
 
-# Frames
-
-left_frame = Frame(root)
-left_frame.pack()
-
-right_frame = Frame(root)
-right_frame.pack()
-
-top_frame = Frame(right_frame)
-top_frame.pack()
-
-# Label 1
-
-btn_add = Button(left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE)
-btn_add.grid(row=1, column=0, pady=10)
-
 status_bar = Label(
     root,
     text="WELCOME to Hotel Management section",
@@ -131,6 +128,43 @@ status_bar = Label(
     font="comicsansMS 8 italic",
 )
 status_bar.pack(side=BOTTOM, fill=X)
+
+# menu
+menubar = Menu(root)
+root.config(menu=menubar)
+
+# submenu
+submenu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Commands", menu=submenu)
+submenu.add_command(label="ADD     ctrl+a", command=new_win)
+submenu.add_command(label="exit", command='')
+
+# submenu 2
+submenu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Help", menu=submenu)
+submenu.add_command(label="about us", command='')
+
+# Frames
+
+left_frame = Frame(root)
+left_frame.pack(side=LEFT, anchor=N)
+
+right_frame = Frame(root)
+right_frame.pack()
+
+# Label 1
+
+btn_add = Button(left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE)
+btn_add.grid(row=0, column=1, padx=200, pady=10)
+
+lbl_resuts = Label(left_frame, text="DATA")
+lbl_resuts.grid(row=2, column=0, sticky=W, padx=20)
+
+lbl_resuts_no = Label(left_frame, text="Results = 5")
+lbl_resuts_no.grid(row=2, column=3, sticky=E, padx=20)
+
+lbl_show = Label(left_frame, text="hhwtfwagfawefwefwefwffwwwwwwwwwwwwfwgwfwfwfwfwfwfwffwfwfwfwfwf")
+lbl_show.grid(row=3, column=0, columnspan=2, pady=10, padx=20, sticky=W)
 
 try:
     if mysql_connection:
