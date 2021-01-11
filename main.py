@@ -87,7 +87,7 @@ def new_win():
     status_bar_2.grid(row=5, column=0, columnspan=2, sticky=W)
 
     btn_submit = Button(
-        new, text="Submit", command=lambda: submit(en_Fname, en_Lname, en_bed, variable, status_bar_2, new)
+        new, text="Submit", command=lambda: submit(en_Fname, en_Lname, en_bed, variable, new)
     )
     btn_submit.grid(row=4, column=0, columnspan=2, pady=10)
 
