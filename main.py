@@ -29,17 +29,14 @@ def mysql_connect():
         btn_connect['state'] = DISABLED
         status_bar['text'] = "connecting to database"
         mydb = mysql.connector.connect(host="db4free.net",
-                                        user="host_root",
-                                        passwd="hatim1603",
-                                        database="hatim_data")
+                                       user="host_root",
+                                       passwd="hatim1603",
+                                       database="hatim_data")
 
         mycursor = mydb.cursor()
         mysql_connection = True
-        status_bar["text"] = "Connection successful!!"
-        btn_connect["state"] = ACTIVE
-
-        return mycursor, mydb
-
+        status_bar['text'] = "Connection successful!!"
+        btn_connect['state'] = ACTIVE
 
 def t1start():
     t1 = Thread(target=mysql_connect)
@@ -48,79 +45,61 @@ def t1start():
 
 # miscellaneous defs
 
-
-def new_win(mycursor):
+def new_win():
     new = Toplevel(root)
-    new.geometry("250x280")
 
-    lbl_Fname = Label(new, text=" FIRST NAME : ")
-    lbl_Fname.grid(row=0, column=0, pady=20, padx=10)
+    lbl_name = Label(new, text="NAME : ")
+    lbl_name.grid(row=0, column=0, pady=20)
 
-    en_Fname = Entry(new)
-    en_Fname.grid(row=0, column=1)
-
-    lbl_Lname = Label(new, text=" LAST NAME : ")
-    lbl_Lname.grid(row=1, column=0, pady=20, padx=10)
-
-    en_Lname = Entry(new)
-    en_Lname.grid(row=1, column=1)
+    en_name = Entry(new, state=DISABLED)
+    en_name.grid(row=0, column=1)
 
     lbl_Room = Label(new, text="Room Alotted : ")
-    lbl_Room.grid(row=2, column=0, padx=10)
+    lbl_Room.grid(row=1, column=0)
 
     options = [
         "Casualty",
         "Day Room",
+        "Consulting Room",
         "Emergency Room",
         "High Dependency unit",
         "ICU",
         "Delivery Room",
         "Operation Theatre",
         "Ward",
-        "Nursery Room",
-    ]
+        "Nursery Room"]
 
     variable = StringVar(root)
     variable.set(options[0])
 
     opt_box = OptionMenu(new, variable, *options)
-    opt_box.grid(row=2, column=1)
+    opt_box.grid(row=1, column=1)
+    opt_box.configure(state="disabled")
 
     bed_no = Label(new, text=" Bed no. : ")
-    bed_no.grid(row=3, column=0, pady=20)
+    bed_no.grid(row=2, column=0, pady=20)
 
-    en_bed = Entry(new)
-    en_bed.grid(row=3, column=1)
+    en_bed = Entry(new, state=DISABLED)
+    en_bed.grid(row=2, column=1)
 
-    btn_submit = Button(
-        new, text="Submit", command=lambda: submit(en_Fname, en_Lname, en_bed, variable, mycursor)
-    )
-    btn_submit.grid(row=4, column=0, columnspan=2, pady=10)
-
-    status_bar_2 = Label(
-        new, text="...", relief=GROOVE, anchor=W, font="comicsansMS 8 italic"
-    )
-    status_bar_2.grid(row=5, column=0, ipadx=110, columnspan=2, sticky=E)
-
-    return en_Fname, en_Lname, en_bed, variable
+    btn_submit = Button(new, text="Submit", command=submit)
+    btn_submit.grid(row=3, column=0, columnspan=2, pady=10)
 
 
-def submit(en_Fname, en_Lname, en_bed, variable, mycursor):
-    Fname = en_Fname.get()
-    Lname = en_Lname.get()
+def add_entry():
+    en_name['state'] = NORMAL
+    en_bed['state'] = NORMAL
+    opt_box.configure(state="normal")
+
+
+def submit():
+    name = en_name.get()
     bed = en_bed.get()
     bed = int(bed)
     room = variable.get()
-    print(Fname, type(Fname))
-    print(Lname, type(Lname))
+    print(name, type(name))
     print(bed, type(bed))
     print(room, type(room))
-
-    values = (Fname, Lname, room, bed)
-    query1 = "INSERT INTO `hatim_data`.`hospital_pt` (`F_name`, `L_name`, `Room`, `Bed_no`) VALUES ({}, {}, {},{});".format(
-        *values
-    )
-
 
 # Frames
 
@@ -139,16 +118,11 @@ top_frame.pack()
 btn_connect = Button(left_frame, text="Connect to database", command=t1start)
 btn_connect.grid(row=0, column=0)
 
-btn_add = Button(left_frame, text="ADD NEW ENTRY", command=lambda: new_win(mycursor), state=ACTIVE)
+btn_add = Button(left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE)
 btn_add.grid(row=1, column=0, pady=10)
 
-status_bar = Label(
-    root,
-    text="WELCOME to Hotel Management section",
-    relief=GROOVE,
-    anchor=W,
-    font="comicsansMS 8 italic",
-)
+status_bar = ttk.Label(root, text="WELCOME to Hotel Management section", relief=GROOVE, anchor=W,
+                       font='comicsansMS 8 italic')
 status_bar.pack(side=BOTTOM, fill=X)
 
 # Bottom Frame
