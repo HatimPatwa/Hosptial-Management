@@ -94,6 +94,11 @@ def new_win():
     return en_Fname, en_Lname, en_bed, variable,
 
 
+def about_us():
+    messagebox._show("Red Cross Hopital", "Hey welcome to Hospital Management System"
+                                          "\n Copyright © 2021 Hatim Studios, Inc.")
+
+
 def submit(
         en_Fname,
         en_Lname,
@@ -101,24 +106,59 @@ def submit(
         variable,
         new
 ):
-    Fname = en_Fname.get()
-    Lname = en_Lname.get()
-    bed = en_bed.get()
-    bed = int(bed)
-    room = variable.get()
-    print(Fname, type(Fname))
-    print(Lname, type(Lname))
-    print(bed, type(bed))
-    print(room, type(room))
+    try:
+        Fname = en_Fname.get().strip()
+        Lname = en_Lname.get().strip()
+        bed = en_bed.get()
+        bed = int(bed)
+        room = variable.get()
+        print(Fname, type(Fname))
+        print(Lname, type(Lname))
+        print(bed, type(bed))
+        print(room, type(room))
 
-    query1 = "INSERT INTO `hatim_data`.`hospital_pt` (`F_name`, `L_name`, `Room`, `Bed_no`) VALUES (%s,%s,%s,%s);"
+        query1 = "INSERT INTO `hatim_data`.`hospital_pt` (`F_name`, `L_name`, `Room`, `Bed_no`) VALUES (%s,%s,%s,%s);"
 
-    mycursor.execute(query1, (Fname, Lname, room, bed))
+        mycursor.execute(query1, (Fname, Lname, room, bed))
 
-    if messagebox.askyesno("hospital management", "confirm insertion of data"):
-        mydb.commit()
-        new.destroy()
+        if messagebox.askyesno("hospital management", "confirm insertion of data"):
+            mydb.commit()
+            new.destroy()
+    except ValueError as error:
+        messagebox.showerror("Error", "Invalid entry !! possible cause : string used instead of int")
 
+
+def search(entry_sch):
+    list_box.delete(0, END)
+    name = entry_sch.get()
+    entry_sch.delete(0, END)
+    squery = "select * from hospital_pt where F_name = '{}' ;".format(name)
+    mycursor.execute(squery)
+    row = 0
+    for x in range(10):
+        a = mycursor.fetchone()
+
+        try:
+            row += 1
+            data = "{}|      Patient's name = {} {}    room = {}    BED Alotted = {} ".format(row, a[1], a[2], a[3],
+                                                                                              a[4])
+            print(data)
+            list_box.insert(x, data)
+        except TypeError:
+            data = "No records found"
+            print(data)
+            row = 0
+            break
+    print(row)
+    lbl_resuts_no["text"] = "Results ={}".format(row)
+
+
+def exit():
+    mydb.close()
+    root.destroy()
+
+
+# Defs End
 
 status_bar = Label(
     root,
@@ -137,35 +177,41 @@ root.config(menu=menubar)
 submenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Commands", menu=submenu)
 submenu.add_command(label="ADD     ctrl+a", command=new_win)
-submenu.add_command(label="exit", command='')
+submenu.add_command(label="exit", command=exit)
 
 # submenu 2
 submenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Help", menu=submenu)
-submenu.add_command(label="about us", command='')
+submenu.add_command(label="about us", command=about_us)
 
 # Frames
 
 left_frame = Frame(root)
-left_frame.pack(side=LEFT, anchor=N)
+left_frame.pack(anchor=N)
 
 right_frame = Frame(root)
 right_frame.pack()
 
 # Label 1
 
-btn_add = Button(left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE)
-btn_add.grid(row=0, column=1, padx=200, pady=10)
+btn_add = Button(left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE, cursor="plus")
+btn_add.grid(row=0, column=1, pady=10)
+
+entry_sch = Entry(left_frame)
+entry_sch.insert(0, "enter patient's name ")
+entry_sch.grid(row=0, column=2)
+
+btn_sch = Button(left_frame, text="search", command=lambda: search(entry_sch), width=20)
+btn_sch.grid(row=0, column=3)
 
 lbl_resuts = Label(left_frame, text="DATA")
 lbl_resuts.grid(row=2, column=0, sticky=W, padx=20)
 
 lbl_resuts_no = Label(left_frame, text="Results = 5")
-lbl_resuts_no.grid(row=2, column=3, sticky=E, padx=20)
+lbl_resuts_no.grid(row=2, column=4)
 
-lbl_show = Label(left_frame, text="hhwtfwagfawefwefwefwffwwwwwwwwwwwwfwgwfwfwfwfwfwfwffwfwfwfwfwf")
-lbl_show.grid(row=3, column=0, columnspan=2, pady=10, padx=20, sticky=W)
-
+list_box = Listbox(left_frame, width=110)
+list_box.grid(row=3, column=0, pady=10, padx=10, columnspan=5)
 try:
     if mysql_connection:
         status_bar["text"] = "Already connected!"
@@ -186,6 +232,12 @@ try:
 except  Exception as ex:
     status_bar['text'] = "check your internet connection or service", ex
 
+
+def cleartext(event):
+    entry_sch.delete(0, END)
+
+
+entry_sch.bind("<Button - 1>", cleartext)
 # Bottom Frame
 
 
