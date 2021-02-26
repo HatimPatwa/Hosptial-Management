@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-from ttkthemes import themed_tk as thk
 import mysql.connector
 from tkinter import messagebox
 
@@ -79,8 +78,8 @@ def new_win():
 
 
 def about_us():
-    messagebox._show("Red Cross Hopital", "Hey welcome to Hospital Management System"
-                                          "\n Copyright © 2021 Hatim Studios, Inc.")
+    messagebox._show("Red Cross Hospital", "Hey welcome to Hospital Management System"
+                                           "\n Copyright © 2021 Hatim Studios, Inc.")
 
 
 def submit(
@@ -114,9 +113,14 @@ def submit(
 
 def search(entry_sch):
     list_box.delete(0, 10)
-    name = entry_sch.get()
+    name = entry_sch.get().strip()
+    if " " in name:
+        name = name.split()
+    else:
+        name = [name, " "]
+    print(name)
     entry_sch.delete(0, END)
-    squery = "select * from hospital_pt where F_name = '{}' ;".format(name)
+    squery = "select * from hospital_pt where F_name = '{}' || L_name = '{}' ;".format(name[0], name[1])
     mycursor.execute(squery)
     row = 0
     for x in range(10):
@@ -144,7 +148,8 @@ def discharge():
     print(value)
     value = value.split()
     print(value)
-    if messagebox.askyesno("hospital management", "confirm discharge of {} {} \n This can't be undone !!"):
+    if messagebox.askyesno("hospital management",
+                           "confirm discharge of {} {} \n This can't be undone !!".format(value[0], value[1])):
         query = "DELETE from hospital_pt where F_name = '{}' and L_name = '{}';".format(value[0], value[1])
         mycursor.execute(query)
 
@@ -236,7 +241,7 @@ try:
         mysql_connection = True
         status_bar["text"] = "Connection successful!!"
 
-except  Exception as ex:
+except Exception as ex:
     status_bar['text'] = "check your internet connection or service", ex
 
 
