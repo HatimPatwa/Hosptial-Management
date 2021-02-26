@@ -2,8 +2,6 @@ from tkinter import *
 from tkinter import ttk
 from ttkthemes import themed_tk as thk
 import mysql.connector
-from time import sleep
-from threading import Thread
 from tkinter import messagebox
 
 root = Tk()  # menu
@@ -140,24 +138,37 @@ def search(entry_sch):
         try:
             a = mycursor.fetchone()
             row += 1
-            data = "{}|      Patient's name = {} {}    room = {}    BED Alotted = {} ".format(row, a[1], a[2], a[3],
-                                                                                              a[4])
+            data = "{}|      Patient's name = {} {}           Room = {}    BED Alotted = {} ".format(row, a[1], a[2],
+                                                                                                     a[3],
+                                                                                                     a[4])
             print(data)
             list_box.insert(x, data)
         except TypeError:
             row -= 1
-            None
             break
     print(row)
+    if row == 0:
+        list_box.insert(0, "NO patients found")
     lbl_resuts_no["text"] = "Results ={}".format(row)
+    mydb.commit()
 
 
 def discharge():
     select = list_box.curselection()
-    print(select)
+    value = list_box.get(select)
+    value = value[25:50]
+    print(value)
+    value = value.split()
+    print(value)
+    if messagebox.askyesno("hospital management", "confirm discharge of {} {} \n This can't be undone !!"):
+        query = "DELETE from hospital_pt where F_name = '{}' and L_name = '{}';".format(value[0], value[1])
+        mycursor.execute(query)
+
+        list_box.delete(select)
 
 
 def close():
+    mydb.commit()
     mydb.close()
     root.destroy()
 
@@ -198,26 +209,26 @@ right_frame.pack()
 
 # Label 1
 
-btn_add = Button(left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE, cursor="plus")
+btn_add = ttk.Button(left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE, cursor="plus")
 btn_add.grid(row=0, column=1, pady=10)
 
-entry_sch = Entry(left_frame)
+entry_sch = ttk.Entry(left_frame)
 entry_sch.insert(0, "enter patient's name ")
 entry_sch.grid(row=0, column=2)
 
-btn_sch = Button(left_frame, text="search", command=lambda: search(entry_sch), width=20)
+btn_sch = ttk.Button(left_frame, text="search", command=lambda: search(entry_sch), width=20)
 btn_sch.grid(row=0, column=3)
 
-lbl_resuts = Label(left_frame, text="DATA")
+lbl_resuts = ttk.Label(left_frame, text="DATA")
 lbl_resuts.grid(row=2, column=0, sticky=W, padx=20)
 
-lbl_resuts_no = Label(left_frame, text="Results = 5")
+lbl_resuts_no = ttk.Label(left_frame, text="Results = ")
 lbl_resuts_no.grid(row=2, column=4)
 
 list_box = Listbox(left_frame, width=110)
 list_box.grid(row=3, column=0, pady=10, padx=10, columnspan=5)
 
-btn_discharge = Button(left_frame, text="Discharge patient", width=20, command=discharge)
+btn_discharge = ttk.Button(left_frame, text="Discharge patient", width=20, command=discharge)
 btn_discharge.grid(row=4, column=4, pady=5)
 
 # mysql connection
