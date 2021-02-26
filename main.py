@@ -19,12 +19,14 @@ mysql_connection = False
 
 # miscellaneous defs
 
-
+# top level window for add entry
 def new_win():
     new = Toplevel(root)
     new.geometry("250x280")
     new.iconbitmap("photos/hospital.ico")
-
+    
+    #Widgets set 2
+    
     lbl_Fname = ttk.Label(new, text=" FIRST NAME : ")
     lbl_Fname.grid(row=0, column=0, pady=20, padx=10)
 
@@ -77,11 +79,11 @@ def new_win():
     return en_Fname, en_Lname, en_bed, variable,
 
 
-def about_us():
+def about_us():  # about us message
     messagebox._show("Red Cross Hospital", "Hey welcome to Hospital Management System"
                                            "\n Copyright © 2021 Hatim Studios, Inc.")
 
-
+# final submition of add entry data in MySql
 def submit(
         en_Fname,
         en_Lname,
@@ -90,8 +92,8 @@ def submit(
         new
 ):
     try:
-        Fname = en_Fname.get().strip()
-        Lname = en_Lname.get().strip()
+        Fname = en_Fname.get().strip()   # for getting clean no whitespace entry
+        Lname = en_Lname.get().strip()  
         bed = en_bed.get()
         bed = int(bed)
         room = variable.get()
@@ -100,7 +102,7 @@ def submit(
         print(bed, type(bed))
         print(room, type(room))
 
-        query1 = "INSERT INTO `hatim_data`.`hospital_pt` (`F_name`, `L_name`, `Room`, `Bed_no`) VALUES (%s,%s,%s,%s);"
+        query1 = "INSERT INTO `hatim_data`.`hospital_pt` (`F_name`, `L_name`, `Room`, `Bed_no`) VALUES (%s,%s,%s,%s);"  # insertion query
 
         mycursor.execute(query1, (Fname, Lname, room, bed))
 
@@ -110,11 +112,11 @@ def submit(
     except ValueError as error:
         messagebox.showerror("Error", "Invalid entry !! possible cause : string used instead of int")
 
-
+# Search field 
 def search(entry_sch):
     list_box.delete(0, 10)
     name = entry_sch.get().strip()
-    if " " in name:
+    if " " in name:   # checking if user input contains whitespaces i.e two names
         name = name.split()
     else:
         name = [name, " "]
@@ -124,24 +126,24 @@ def search(entry_sch):
     mycursor.execute(squery)
     row = 0
     for x in range(10):
-        try:
+        try:   
             a = mycursor.fetchone()
             row += 1
             data = "{}|      Patient's name = {} {}           Room = {}    BED Alotted = {} ".format(row, a[1], a[2],
                                                                                                      a[3],
                                                                                                      a[4])
             print(data)
-            list_box.insert(x, data)
-        except TypeError:
+            list_box.insert(x, data) # results here :)
+        except TypeError: # type error if any invalid input is made like integers or end of results
             row -= 1
             break
     print(row)
     if row == 0:
         list_box.insert(0, "NO patients found")
-    lbl_resuts_no["text"] = "Results ={}".format(row)
+    lbl_resuts_no["text"] = "Results ={}".format(row) 
 
 
-def discharge():
+def discharge():  # discharging patients according to selection
     select = list_box.curselection()
     value = list_box.get(select)
     value = value[25:50]
@@ -197,7 +199,7 @@ left_frame.pack(anchor=N)
 right_frame = Frame(root)
 right_frame.pack()
 
-# Label 1
+# Widgets set 1
 
 btn_add = ttk.Button(left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE, cursor="plus")
 btn_add.grid(row=0, column=1, pady=10)
@@ -222,7 +224,7 @@ btn_discharge = ttk.Button(left_frame, text="Discharge patient", width=20, comma
 btn_discharge.grid(row=4, column=4, pady=5)
 
 # mysql connection
-
+# please be patient at start due to connection on online data it takes time to load
 try:
     if mysql_connection:
         status_bar["text"] = "Already connected!"
@@ -241,16 +243,16 @@ try:
         mysql_connection = True
         status_bar["text"] = "Connection successful!!"
 
-except Exception as ex:
+except Exception as ex: # checking internet connection
     status_bar['text'] = "check your internet connection or service", ex
 
-
+# bindings
 def cleartext(event):
     entry_sch.delete(0, END)
 
 
 entry_sch.bind("<Button - 1>", cleartext)
-# Bottom Frame
 
 
+# end loop
 root.mainloop()
