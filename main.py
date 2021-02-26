@@ -4,22 +4,7 @@ from ttkthemes import themed_tk as thk
 import mysql.connector
 from tkinter import messagebox
 
-root = Tk()  # menu
-menubar = Menu(root)
-root.config(menu=menubar)
-
-# submenu
-submenu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Commands", menu=submenu)
-submenu.add_command(label="open", command="")
-submenu.add_command(label="exit", command="")
-
-# submenu 2
-submenu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Help", menu=submenu)
-submenu.add_command(label="about us", command="")
-# root.get_themes()
-# root.set_theme("radiance")
+root = Tk()
 root.geometry("700x320")
 root.maxsize(width=700, height=350)
 root.minsize(width=550, height=300)
@@ -150,7 +135,6 @@ def search(entry_sch):
     if row == 0:
         list_box.insert(0, "NO patients found")
     lbl_resuts_no["text"] = "Results ={}".format(row)
-    mydb.commit()
 
 
 def discharge():
@@ -165,6 +149,7 @@ def discharge():
         mycursor.execute(query)
 
         list_box.delete(select)
+    mydb.commit()
 
 
 def close():
@@ -244,6 +229,7 @@ try:
             user="host_root",
             passwd="hatim1603",
             database="hatim_data",
+            port=3306
         )
 
         mycursor = mydb.cursor()
