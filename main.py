@@ -2,11 +2,14 @@ from tkinter import *
 from tkinter import ttk
 import mysql.connector
 from tkinter import messagebox
+from threading import Thread
+from time import sleep
+import random
 
-root = Tk()
+root = Tk()  # making root window
 root.geometry("700x320")
-root.maxsize(width=700, height=350)
-root.minsize(width=550, height=300)
+root.maxsize(width=700, height=400)
+root.minsize(width=550, height=370)
 root.iconbitmap("photos/hospital.ico")
 root.title("RED CROSS HOSPITAL")
 
@@ -157,10 +160,47 @@ def discharge():
     mydb.commit()
 
 
-def close():
+def close():  # properly closes the root window
     mydb.commit()
     mydb.close()
+    prog_bar.destroy()
     root.destroy()
+
+
+def new_win_ambu():  # new window for destination entry
+    new = Toplevel(root)
+    new.geometry("350x100")
+    new.iconbitmap("photos/hospital.ico")
+
+    lbl_dest = ttk.Label(new, text="Enter destination")
+    lbl_dest.grid(row=0, column=0, padx=10, pady=10)
+
+    entry_dest = ttk.Entry(new, width=30)
+    entry_dest.grid(row=0, column=1)
+
+    btn_dest = ttk.Button(new, text="dispatch", width=15, command=lambda: t(new))
+    btn_dest.grid(row=1, column=1, sticky=W)
+
+
+def progress():
+    prog_bar.stop()
+    time_taken = random.randint(1, 5)
+    print(time_taken)
+    time_left = 100 / time_taken
+    time_left = time_left.__round__(2)
+    time_left = int(time_left)
+    lbl_time_left['text'] = "Ambulance will reach it's destination in {} Mins".format(time_left)
+    while prog_bar['value'] <= 100:
+        prog_bar['value'] += time_taken
+        root.update_idletasks()
+        sleep(1)
+    lbl_time_left['text'] = "The ambulance has reached its Destination"
+
+
+def t(new):
+    t1 = Thread(target=progress)
+    new.destroy()
+    t1.start()
 
 
 # Defs End
@@ -220,6 +260,15 @@ list_box.grid(row=3, column=0, pady=10, padx=10, columnspan=5)
 
 btn_discharge = ttk.Button(left_frame, text="Discharge patient", width=20, command=discharge)
 btn_discharge.grid(row=4, column=4, pady=5)
+
+prog_bar = ttk.Progressbar(left_frame, value=0, length=300, mode="determinate", maximum=100)
+prog_bar.grid(row=5, column=1, columnspan=2)
+
+btn_ambu = ttk.Button(left_frame, text="Emergency Ambulance", width=22, command=new_win_ambu)
+btn_ambu.grid(row=5, column=4, pady=5)
+
+lbl_time_left = ttk.Label(left_frame, text="")
+lbl_time_left.grid(row=6, column=1, columnspan=2)
 
 # mysql connection
 
