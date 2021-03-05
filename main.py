@@ -27,9 +27,9 @@ def new_win():
     new = Toplevel(root)
     new.geometry("250x280")
     new.iconbitmap("photos/hospital.ico")
-    
-    #Widgets set 2
-    
+
+    # Widgets set 2
+
     lbl_Fname = ttk.Label(new, text=" FIRST NAME : ")
     lbl_Fname.grid(row=0, column=0, pady=20, padx=10)
 
@@ -86,6 +86,7 @@ def about_us():  # about us message
     messagebox._show("Red Cross Hospital", "Hey welcome to Hospital Management System"
                                            "\n Copyright © 2021 Hatim Studios, Inc.")
 
+
 # final submition of add entry data in MySql
 def submit(
         en_Fname,
@@ -95,8 +96,8 @@ def submit(
         new
 ):
     try:
-        Fname = en_Fname.get().strip()   # for getting clean no whitespace entry
-        Lname = en_Lname.get().strip()  
+        Fname = en_Fname.get().strip()  # for getting clean no whitespace entry
+        Lname = en_Lname.get().strip()
         bed = en_bed.get()
         bed = int(bed)
         room = variable.get()
@@ -115,11 +116,12 @@ def submit(
     except ValueError as error:
         messagebox.showerror("Error", "Invalid entry !! possible cause : string used instead of int")
 
-# Search field 
+
+# Search field
 def search(entry_sch):
     list_box.delete(0, 10)
     name = entry_sch.get().strip()
-    if " " in name:   # checking if user input contains whitespaces i.e two names
+    if " " in name:  # checking if user input contains whitespaces i.e two names
         name = name.split()
     else:
         name = [name, " "]
@@ -129,21 +131,21 @@ def search(entry_sch):
     mycursor.execute(squery)
     row = 0
     for x in range(10):
-        try:   
+        try:
             a = mycursor.fetchone()
             row += 1
             data = "{}|      Patient's name = {} {}           Room = {}    BED Alotted = {} ".format(row, a[1], a[2],
                                                                                                      a[3],
                                                                                                      a[4])
             print(data)
-            list_box.insert(x, data) # results here :)
-        except TypeError: # type error if any invalid input is made like integers or end of results
+            list_box.insert(x, data)  # results here :)
+        except TypeError:  # type error if any invalid input is made like integers or end of results
             row -= 1
             break
     print(row)
     if row == 0:
         list_box.insert(0, "NO patients found")
-    lbl_resuts_no["text"] = "Results ={}".format(row) 
+    lbl_resuts_no["text"] = "Results ={}".format(row)
 
 
 def discharge():  # discharging patients according to selection
@@ -292,8 +294,9 @@ try:
         mysql_connection = True
         status_bar["text"] = "Connection successful!!"
 
-except Exception as ex: # checking internet connection
+except Exception as ex:  # checking internet connection
     status_bar['text'] = "check your internet connection or service", ex
+
 
 # bindings
 def cleartext(event):
@@ -301,7 +304,6 @@ def cleartext(event):
 
 
 entry_sch.bind("<Button - 1>", cleartext)
-
 
 # end loop
 root.mainloop()
