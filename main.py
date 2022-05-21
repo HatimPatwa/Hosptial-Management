@@ -75,26 +75,30 @@ def new_win():
     status_bar_2.grid(row=5, column=0, columnspan=2, sticky=W)
 
     btn_submit = ttk.Button(
-        new, text="Submit", command=lambda: submit(en_Fname, en_Lname, en_bed, variable, new)
+        new,
+        text="Submit",
+        command=lambda: submit(en_Fname, en_Lname, en_bed, variable, new),
     )
     btn_submit.grid(row=4, column=0, columnspan=2, pady=10)
 
-    return en_Fname, en_Lname, en_bed, variable,
-
-
-def about_us():  # about us message
-    messagebox._show("Red Cross Hospital", "Hey welcome to Hospital Management System"
-                                           "\n Copyright © 2021 Hatim Studios, Inc.")
-
-
-# final submition of add entry data in MySql
-def submit(
+    return (
         en_Fname,
         en_Lname,
         en_bed,
         variable,
-        new
-):
+    )
+
+
+def about_us():  # about us message
+    messagebox._show(
+        "Red Cross Hospital",
+        "Hey welcome to Hospital Management System"
+        "\n Copyright © 2021 Hatim Studios, Inc.",
+    )
+
+
+# final submition of add entry data in MySql
+def submit(en_Fname, en_Lname, en_bed, variable, new):
     try:
         Fname = en_Fname.get().strip()  # for getting clean no whitespace entry
         Lname = en_Lname.get().strip()
@@ -113,8 +117,11 @@ def submit(
         if messagebox.askyesno("hospital management", "confirm insertion of data"):
             mydb.commit()
             new.destroy()
+            main()
     except ValueError as error:
-        messagebox.showerror("Error", "Invalid entry !! possible cause : string used instead of int")
+        messagebox.showerror(
+            "Error", "Invalid entry !! possible cause : string used instead of int"
+        )
 
 
 # Search field
@@ -127,16 +134,18 @@ def search(entry_sch):
         name = [name, " "]
     print(name)
     entry_sch.delete(0, END)
-    squery = "select * from hospital_pt where F_name = '{}' || L_name = '{}' ;".format(name[0], name[1])
+    squery = "select * from hospital_pt where F_name = '{}' || L_name = '{}' ;".format(
+        name[0], name[1]
+    )
     mycursor.execute(squery)
     row = 0
     for x in range(10):
         try:
             a = mycursor.fetchone()
             row += 1
-            data = "{}|      Patient's name = {} {}           Room = {}    BED Alotted = {} ".format(row, a[1], a[2],
-                                                                                                     a[3],
-                                                                                                     a[4])
+            data = "{}|      Patient's name = {} {}           Room = {}    BED Alotted = {} ".format(
+                row, a[1], a[2], a[3], a[4]
+            )
             print(data)
             list_box.insert(x, data)  # results here :)
         except TypeError:  # type error if any invalid input is made like integers or end of results
@@ -155,9 +164,15 @@ def discharge():  # discharging patients according to selection
     print(value)
     value = value.split()
     print(value)
-    if messagebox.askyesno("hospital management",
-                           "confirm discharge of {} {} \n This can't be undone !!".format(value[0], value[1])):
-        query = "DELETE from hospital_pt where F_name = '{}' and L_name = '{}';".format(value[0], value[1])
+    if messagebox.askyesno(
+        "hospital management",
+        "confirm discharge of {} {} \n This can't be undone !!".format(
+            value[0], value[1]
+        ),
+    ):
+        query = "DELETE from hospital_pt where F_name = '{}' and L_name = '{}';".format(
+            value[0], value[1]
+        )
         mycursor.execute(query)
 
         list_box.delete(select)
@@ -193,12 +208,14 @@ def progress():
     time_left = 100 / time_taken
     time_left = time_left.__round__(2)
     time_left = int(time_left)
-    lbl_time_left['text'] = "Ambulance will reach it's destination in {} Mins".format(time_left)
-    while prog_bar['value'] <= 100:
-        prog_bar['value'] += time_taken
+    lbl_time_left["text"] = "Ambulance will reach it's destination in {} Mins".format(
+        time_left
+    )
+    while prog_bar["value"] <= 100:
+        prog_bar["value"] += time_taken
         root.update_idletasks()
         sleep(1)
-    lbl_time_left['text'] = "The ambulance has reached its Destination"
+    lbl_time_left["text"] = "The ambulance has reached its Destination"
 
 
 def t(new):
@@ -243,14 +260,18 @@ right_frame.pack()
 
 # Widgets set 1
 
-btn_add = ttk.Button(left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE, cursor="plus")
+btn_add = ttk.Button(
+    left_frame, text="ADD NEW ENTRY", command=new_win, state=ACTIVE, cursor="plus"
+)
 btn_add.grid(row=0, column=1, pady=10)
 
 entry_sch = ttk.Entry(left_frame)
 entry_sch.insert(0, "enter patient's name ")
 entry_sch.grid(row=0, column=2)
 
-btn_sch = ttk.Button(left_frame, text="search", command=lambda: search(entry_sch), width=20)
+btn_sch = ttk.Button(
+    left_frame, text="search", command=lambda: search(entry_sch), width=20
+)
 btn_sch.grid(row=0, column=3)
 
 lbl_resuts = ttk.Label(left_frame, text="DATA")
@@ -262,13 +283,19 @@ lbl_resuts_no.grid(row=2, column=4)
 list_box = Listbox(left_frame, width=110)
 list_box.grid(row=3, column=0, pady=10, padx=10, columnspan=5)
 
-btn_discharge = ttk.Button(left_frame, text="Discharge patient", width=20, command=discharge)
+btn_discharge = ttk.Button(
+    left_frame, text="Discharge patient", width=20, command=discharge
+)
 btn_discharge.grid(row=4, column=4, pady=5)
 
-prog_bar = ttk.Progressbar(left_frame, value=0, length=300, mode="determinate", maximum=100)
+prog_bar = ttk.Progressbar(
+    left_frame, value=0, length=300, mode="determinate", maximum=100
+)
 prog_bar.grid(row=5, column=1, columnspan=2)
 
-btn_ambu = ttk.Button(left_frame, text="Emergency Ambulance", width=22, command=new_win_ambu)
+btn_ambu = ttk.Button(
+    left_frame, text="Emergency Ambulance", width=22, command=new_win_ambu
+)
 btn_ambu.grid(row=5, column=4, pady=5)
 
 lbl_time_left = ttk.Label(left_frame, text="")
@@ -287,7 +314,7 @@ try:
             user="host_root",
             passwd="hatim1603",
             database="hatim_data",
-            port=3306
+            port=3306,
         )
 
         mycursor = mydb.cursor()
@@ -295,8 +322,34 @@ try:
         status_bar["text"] = "Connection successful!!"
 
 except Exception as ex:  # checking internet connection
-    status_bar['text'] = "check your internet connection or service", ex
+    status_bar["text"] = "check your internet connection or service", ex
 
+
+def main():
+    list_box.delete(0, 100)
+    squery = "select * from hospital_pt;"
+    mycursor.execute(squery)
+    row = 0
+    for x in range(100):
+        try:
+            a = mycursor.fetchone()
+            row += 1
+            data = "{}|      Patient's name = {} {}           Room = {}    BED Alotted = {} ".format(
+                row, a[1], a[2], a[3], a[4]
+            )
+            print(data)
+            list_box.insert(x, data)  # results here :)
+        except TypeError:  # type error if any invalid input is made like integers or end of results
+            row -= 1
+            break
+    print(row)
+    if row == 0:
+        list_box.insert(0, "NO patients found")
+    lbl_resuts_no["text"] = "Results ={}".format(row)
+
+
+if __name__ == "__main__":
+    main()
 
 # bindings
 def cleartext(event):
